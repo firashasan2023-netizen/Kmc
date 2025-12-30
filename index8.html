@@ -21,6 +21,8 @@
             font-weight: 800;
             z-index: 1000;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 250px;
+            text-align: center;
         }
         .show-toast { top: 30px; }
         .full-badge {
@@ -35,18 +37,18 @@
 <body class="text-slate-900">
 
     <!-- التنبيه العراقي المتغير -->
-    <div id="toast" class="toast-iraqi shadow-2xl flex items-center gap-2">
+    <div id="toast" class="toast-iraqi shadow-2xl flex items-center justify-center gap-2">
         <span id="toast-icon"></span>
         <span id="toast-msg"></span>
     </div>
 
-    <!-- الهيدر البسيط جداً -->
+    <!-- الهيدر -->
     <header class="py-10 px-6 text-center border-b border-slate-50">
         <h1 class="text-3xl font-black tracking-tight text-slate-900">إعداد: فراس حسن العبيدي</h1>
         <p class="text-slate-400 text-sm mt-2 font-medium">اختبار العلوم السلوكية | MCQ</p>
     </header>
 
-    <!-- بار الإحصائيات الذكي -->
+    <!-- بار الإحصائيات -->
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 py-4">
         <div class="max-w-2xl mx-auto px-6 flex justify-between items-center">
             <div class="flex items-center gap-6">
@@ -126,7 +128,12 @@
             { q: "Wilhelm Wundt is historically significant in psychology for developing which school of thought?", options: ["Functionalism", "Behaviorism", "Structuralism", "Psychoanalysis", "Humanism"], a: 2 },
             { q: "Which branch of psychology studies the psychological, cognitive, and social changes that occur across the entire human lifespan?", options: ["Clinical", "Forensic", "Health", "Industrial", "Developmental"], a: 4 },
             { q: "Which method is considered to have the best long-term effect on the reduction of an unwanted behavior?", options: ["Punishment", "Flooding", "Extinction", "Backward conditioning", "Spontaneous recovery"], a: 2 },
-            { q: "Sympathetic nervous system fibers primarily originate from which region of the spinal cord?", options: ["Craniosacral", "Cervical", "Thoracolumbar (T1-L2)", "Sacral region only", "Brainstem only"], a: 2 }
+            { q: "Sympathetic nervous system fibers primarily originate from which region of the spinal cord?", options: ["Craniosacral", "Cervical", "Thoracolumbar (T1-L2)", "Sacral region only", "Brainstem only"], a: 2 },
+            // الأسئلة الجديدة المضافة
+            { q: "A patient being treated for Parkinson’s disease focusing on dopamine neurons falls under which perspective of psychology?", options: ["Developmental psychology", "Cognitive psychology", "Humanistic psychology", "Social psychology", "Biological psychology"], a: 4 },
+            { q: "A caregiver’s sensitive and consistent response to a child’s needs primarily helps the child develop:", options: ["Strong defense mechanisms", "Reduced Oedipus conflict", "Secure attachment", "Enhanced superego", "Both A and C"], a: 2 },
+            { q: "Attachment in developmental psychology is best described as the child's:", options: ["Ability to mirror self-behavior", "Closeness to family members and primary caregivers", "Achievement of cognitive milestones", "Resolution of the oral stage", "Development of motor skills"], a: 1 },
+            { q: "Regarding classical conditioning, an unconditioned stimulus will automatically produce a/an:", options: ["Extinction phase", "Neutral phase", "Conditioned response", "Conditioned stimulus", "Unconditioned response"], a: 4 }
         ];
 
         const IRAQI_CORRECT = [
@@ -159,7 +166,6 @@
             
             const currentGrade = (stats.correct * weight);
             
-            // التحقق من شرط "انت ماشاء الله فول"
             if (currentGrade > 15 && !milestoneReached) {
                 msgEl.innerText = "انت ماشاء الله فول 🔥";
                 toast.style.backgroundColor = "#eab308"; // لون ذهبي
@@ -205,6 +211,7 @@
 
         function initQuiz() {
             const container = document.getElementById('quiz-container');
+            container.innerHTML = ''; // Clear container
             QUESTIONS.forEach((q, i) => {
                 const div = document.createElement('div');
                 div.id = `card-${i}`;
@@ -233,8 +240,10 @@
             lucide.createIcons();
         }
 
-        initQuiz();
+        // Initialize on window load
+        window.onload = function() {
+            initQuiz();
+        };
     </script>
 </body>
 </html>
-
