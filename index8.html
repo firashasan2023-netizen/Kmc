@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعداد فراس حسن العبيدي - اختبار العلوم السلوكية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #ffffff; }
+        .opt-btn:disabled { pointer-events: none; }
+        .toast-iraqi {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 28px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 800;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .show-toast { top: 30px; }
+        .full-badge {
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="text-slate-900">
+
+    <!-- التنبيه العراقي المتغير -->
+    <div id="toast" class="toast-iraqi shadow-2xl flex items-center gap-2">
+        <span id="toast-icon"></span>
+        <span id="toast-msg"></span>
+    </div>
+
+    <!-- الهيدر البسيط جداً -->
+    <header class="py-10 px-6 text-center border-b border-slate-50">
+        <h1 class="text-3xl font-black tracking-tight text-slate-900">إعداد: فراس حسن العبيدي</h1>
+        <p class="text-slate-400 text-sm mt-2 font-medium">اختبار العلوم السلوكية | MCQ</p>
+    </header>
+
+    <!-- بار الإحصائيات الذكي -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 py-4">
+        <div class="max-w-2xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-6">
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-black text-slate-400 uppercase">الدرجة</span>
+                    <span class="text-xl font-black text-indigo-600"><span id="grade">0.0</span> <span class="text-xs text-slate-300">/ 30</span></span>
+                </div>
+                <div id="full-msg" class="hidden flex items-center gap-1 bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-black full-badge">
+                    🌟 انت ماشاء الله فول
+                </div>
+            </div>
+            <div class="flex gap-4 text-center">
+                <div>
+                    <span class="block text-[10px] font-black text-emerald-500 uppercase">صح</span>
+                    <span id="correct" class="font-bold">0</span>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-black text-rose-500 uppercase">خطأ</span>
+                    <span id="wrong" class="font-bold">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto px-6 py-12">
+        <!-- حاوية الأسئلة -->
+        <div id="quiz-container" class="space-y-16"></div>
+    </main>
+
+    <footer class="py-16 text-center text-slate-200 text-xs font-bold border-t border-slate-50">
+        إعداد: فراس حسن العبيدي &copy; 2025
+    </footer>
+
+    <script>
+        const QUESTIONS = [
+            { q: "Which structure in the brain is primarily responsible for the formation of new information and memories?", options: ["Amygdala", "Thalamus", "Hypothalamus", "Cerebellum", "Hippocampus"], a: 4 },
+            { q: "Anna Freud is best known for developing and emphasizing which aspect of psychoanalysis?", options: ["Sexual drives and libido", "Dream symbolism", "The ego and defense mechanisms", "Object relations theory", "Collective unconscious"], a: 2 },
+            { q: "From a biological perspective, Parkinsonism is primarily associated with a deficiency in which neurotransmitter?", options: ["Serotonin", "GABA", "Acetlycholine", "Dopamine", "Glutamate"], a: 3 },
+            { q: "Auditory agnosia is most commonly associated with a lesion in which specific area of the brain?", options: ["Right occipital lobe", "Left superior temporal lobe", "Prefrontal cortex", "Postcentral gyrus", "Basal ganglia"], a: 1 },
+            { q: "A child occasionally receives a reward for cleaning his room. After the rewards stop, he continues cleaning (resistance to extinction). This is an example of which reinforcement schedule?", options: ["Fixed ratio", "Fixed interval", "Variable ratio", "Continuous reinforcement", "Negative reinforcement"], a: 2 },
+            { q: "According to the Big Five personality traits, a person who is organized, reliable, and disciplined scores high on:", options: ["Openness", "Neuroticism", "Agreeableness", "Conscientiousness", "Extraversion"], a: 3 },
+            { q: "In the General Adaptation Syndrome (GAS), what is the name of the first stage of the stress response?", options: ["Resistance", "Exhaustion", "Alarm", "Adaptation", "Homeostasis"], a: 2 },
+            { q: "Which neurotransmitter is the primary inhibitory chemical in the central nervous system?", options: ["Glutamate", "Dopamine", "GABA", "Norepinephrine", "Serotonin"], a: 2 },
+            { q: "Myelin increases the speed of nerve conduction (Action Potential) through which mechanism?", options: ["Continuous conduction", "Slowing ion movement", "Saltatory conduction", "Increasing synaptic delay", "Decreasing membrane resistance"], a: 2 },
+            { q: "In terms of physical development, the infant brain typically triples in weight within the first:", options: ["6 months", "1 year", "2 years", "3 years", "5 years"], a: 3 },
+            { q: "Which hormone is released as part of the HPA axis response during periods of chronic stress?", options: ["Insulin", "Thyroxine", "Cortisol", "Melatonin", "Aldosterone"], a: 2 },
+            { q: "Redirecting anger or aggression from a threatening supervisor toward a safer target (like a family member) is known as:", options: ["Projection", "Sublimation", "Displacement", "Denial", "Rationalization"], a: 2 },
+            { q: "A 2-year-old child who is afraid of nurses in white uniforms starts crying when his grandmother visits in a white jacket. This is an example of:", options: ["Stimulus discrimination", "Stimulus generalization", "Spontaneous recovery", "Modeling", "Operant conditioning"], a: 1 },
+            { q: "Which behavioral technique involves exposing a patient to a frightening stimulus in gradual doses while they are in a state of relaxation?", options: ["Flooding", "Aversion therapy", "Token economy", "Systematic desensitization", "Biofeedback"], a: 3 },
+            { q: "Choosing between two equally desirable and appealing study programs or job offers represents which type of conflict?", options: ["Approach-avoidance", "Avoidance-avoidance", "Approach-approach", "Multiple approach-avoidance", "Cognitive dissonance"], a: 2 },
+            { q: "The correct order of the stages in the perception process is:", options: ["Organizing -> Selecting -> Interpretation", "Selecting -> Organizing -> Interpretation", "Interpretation -> Selecting -> Organizing", "Selecting -> Interpretation -> Organizing", "Organizing -> Interpretation -> Selecting"], a: 1 },
+            { q: "Cluster A personality disorders, characterized by odd or eccentric behavior, include:", options: ["Antisocial, Borderline, Histrionic", "Avoidant, Dependent, Obsessive-Compulsive", "Paranoid, Schizoid, Schizotypal", "Narcissistic, Paranoid, Antisocial", "Schizoid, Avoidant, Dependent"], a: 2 },
+            { q: "A patient who demonstrates magical thinking, eccentric beliefs, and cognitive distortions most likely suffers from which personality disorder?", options: ["Schizoid", "Schizotypal", "Paranoid", "Borderline", "Histrionic"], a: 1 },
+            { q: "What is the normal Resting Membrane Potential (RMP) in a typical neuron?", options: ["0 mV", "+30 mV", "-55 mV", "-70 mV", "-90 mV"], a: 3 },
+            { q: "Which brain lobe is most commonly associated with executive functions, planning, and decision-making?", options: ["Occipital lobe", "Parietal lobe", "Temporal lobe", "Frontal lobe", "Insular lobe"], a: 3 },
+            { q: "At what age does a child typically reach the peak of 'Separation Anxiety'?", options: ["3-6 months", "6-9 months", "10-12 months", "14-18 months", "24-36 months"], a: 3 },
+            { q: "Which of the following is a form of 'Non-associative learning' where a person becomes less responsive to a repeated stimulus?", options: ["Classical conditioning", "Operant conditioning", "Habituation", "Modeling", "Insight learning"], a: 2 },
+            { q: "In Pavlov’s classical conditioning experiments, the salivation of a dog in response to the 'ODOR' of food is considered a/an:", options: ["Conditioned Stimulus", "Conditioned Response", "Unconditioned Stimulus", "Unconditioned Response", "Neutral Stimulus"], a: 3 },
+            { q: "Which of the following is considered a 'Mature and socially adaptive' defense mechanism?", options: ["Denial", "Projection", "Humor", "Regression", "Displacement"], a: 2 },
+            { q: "A personality characterized by being highly competitive, ambitious, time-conscious, and sometimes hostile is known as:", options: ["Type A personality", "Type B personality", "Narcissistic personality", "Borderline personality", "Histrionic personality"], a: 0 },
+            { q: "According to Psychoanalytic theory, fixation during the 'Oral Stage' of development may manifest in adulthood as:", options: ["Excessive orderliness", "Excessive drinking or smoking", "Compulsive cleaning", "Extreme stubbornness", "Fear of intimacy"], a: 1 },
+            { q: "In neurobiology, 'Fast-acting' neurotransmitter receptors that directly open an ion channel are called:", options: ["Metabotropic receptors", "G-protein coupled receptors", "Ionotropic receptors", "Enzyme-linked receptors", "Nuclear receptors"], a: 2 },
+            { q: "What is the psychological term for the experience of being blocked from reaching a desired goal or path?", options: ["Conflict", "Aggression", "Frustration", "Anxiety", "Regression"], a: 2 },
+            { q: "The 'Hypnagogic state' refers to the psychological and physiological state that occurs:", options: ["During deep REM sleep", "During intense meditation", "Between wakefulness and sleep", "After a seizure", "During high-stress situations"], a: 2 },
+            { q: "Heinz Kohut’s 'Self Psychology' differs from Freud’s theory by emphasizing the child's need for:", options: ["Resolving the Oedipal complex", "Repressing sexual drives", "Developing a cohesive self through empathy", "Strengthening the superego", "Collective unconscious archetypes"], a: 2 },
+            { q: "In classical conditioning, which method involves presenting and then removing the Conditioned Stimulus (CS) before the Unconditioned Stimulus (UCS) is presented?", options: ["Delayed conditioning", "Simultaneous conditioning", "Backward conditioning", "Trace conditioning", "Higher-order conditioning"], a: 3 },
+            { q: "Attachment is best described as the emotional bond and physical closeness between a child and their:", options: ["Siblings", "Peers", "Primary caregiver", "Healthcare provider", "Teacher"], a: 2 },
+            { q: "An individual who prefers social isolation, lacks a desire for close relationships, and shows emotional coldness most likely has:", options: ["Paranoid PD", "Schizoid PD", "Schizotypal PD", "Avoidant PD", "Narcissistic PD"], a: 1 },
+            { q: "According to Gestalt psychology, the 'Law of Pragnanz' states that we tend to perceive complex images in their:", options: ["Most complex form", "Most detailed form", "Simplest possible form", "Colored form only", "Fragmented form"], a: 2 },
+            { q: "In the Central Nervous System (CNS), which specialized glial cells are responsible for the myelination of axons?", options: ["Schwann cells", "Astrocytes", "Microglia", "Oligodendrocytes", "Ependymal cells"], a: 3 },
+            { q: "The clinical technique of pairing alcohol intake with a nausea-inducing drug (such as Antabuse) to create an unpleasant association is an example of:", options: ["Negative reinforcement", "Flooding", "Aversive therapy", "Extinction", "Systematic desensitization"], a: 2 },
+            { q: "Within the structure of a typical neuron, which part is primarily specialized for receiving incoming signals or input from other neurons?", options: ["Axon", "Cell body (Soma)", "Dendrites", "Myelin sheath", "Node of Ranvier"], a: 2 },
+            { q: "In Classical Conditioning, salivation that occurs specifically in response to a bell AFTER learning has taken place is classified as a:", options: ["Unconditioned response", "Neutral response", "Conditioned response", "Unconditioned reflex", "Conditioned stimulus"], a: 2 },
+            { q: "Which projective personality test utilizes a series of ambiguous inkblots to explore a patient's unconscious conflicts?", options: ["MMPI", "Big Five Inventory", "IQ Test", "Mini-Mental State Exam", "Rorschach Test"], a: 4 },
+            { q: "According to behavioral science texts, excessive 'Agreeableness' (one of the Big Five) mainly increases the risk of:", options: ["Recklessness", "Exploitation", "Delusion", "Rigidity", "Despair"], a: 1 },
+            { q: "What is the most important factor in the onset and decline of fear (e.g., stranger anxiety) in infants?", options: ["Physical strength", "Memory capacity", "Nutrition intake", "Sibling interaction", "Social status"], a: 1 },
+            { q: "Wilhelm Wundt is historically significant in psychology for developing which school of thought?", options: ["Functionalism", "Behaviorism", "Structuralism", "Psychoanalysis", "Humanism"], a: 2 },
+            { q: "Which branch of psychology studies the psychological, cognitive, and social changes that occur across the entire human lifespan?", options: ["Clinical", "Forensic", "Health", "Industrial", "Developmental"], a: 4 },
+            { q: "Which method is considered to have the best long-term effect on the reduction of an unwanted behavior?", options: ["Punishment", "Flooding", "Extinction", "Backward conditioning", "Spontaneous recovery"], a: 2 },
+            { q: "Sympathetic nervous system fibers primarily originate from which region of the spinal cord?", options: ["Craniosacral", "Cervical", "Thoracolumbar (T1-L2)", "Sacral region only", "Brainstem only"], a: 2 }
+        ];
+
+        const IRAQI_CORRECT = [
+            "عاشت إيدك يا وردة، كفو منك! 🌸",
+            "أحسنت يا بطل، لوز اللوز! ✨",
+            "معدل وربي، إجابة ذيبة! 🐺",
+            "العب، قاري ومضبط الأمور! 📚",
+            "شنو هاي؟ عبقري وربي 🧠",
+            "صايرة وبالگصة، عشت! ✅",
+            "دكتور المستقبل، استمر يا وحش! 🩺"
+        ];
+
+        const IRAQI_WRONG = [
+            "ميخالف تعوض بالفاينل، سهلة ✌️",
+            "يلا الجاية أسهل، شد حيلك 🛡️",
+            "بسيطة، ركز بالسؤال الجاي عيني 🎯",
+            "ميخالف، الإنسان يتعلم من أغلاطه 🌱",
+            "هاردلك، قليل من التركيز وتصير لوز 💡",
+            "مو مشكلة، أنت گدها 🚀",
+            "دير بالك عيني، اقراها مرة ثانية 🎈"
+        ];
+
+        let stats = { correct: 0, wrong: 0 };
+        const weight = 0.6;
+        let milestoneReached = false;
+
+        function showIraqiToast(isCorrect) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-msg');
+            
+            const currentGrade = (stats.correct * weight);
+            
+            // التحقق من شرط "انت ماشاء الله فول"
+            if (currentGrade > 15 && !milestoneReached) {
+                msgEl.innerText = "انت ماشاء الله فول 🔥";
+                toast.style.backgroundColor = "#eab308"; // لون ذهبي
+                milestoneReached = true;
+                document.getElementById('full-msg').classList.remove('hidden');
+            } else {
+                const list = isCorrect ? IRAQI_CORRECT : IRAQI_WRONG;
+                msgEl.innerText = list[Math.floor(Math.random() * list.length)];
+                toast.style.backgroundColor = isCorrect ? "#10b981" : "#ef4444";
+            }
+
+            toast.classList.add('show-toast');
+            setTimeout(() => toast.classList.remove('show-toast'), 2500);
+        }
+
+        function checkAnswer(qIdx, optIdx, btn) {
+            const q = QUESTIONS[qIdx];
+            const card = document.getElementById(`card-${qIdx}`);
+            const buttons = card.querySelectorAll('.opt-btn');
+
+            buttons.forEach(b => b.disabled = true);
+
+            if (optIdx === q.a) {
+                btn.classList.add('bg-emerald-500', 'text-white', 'border-emerald-600');
+                stats.correct++;
+                showIraqiToast(true);
+            } else {
+                btn.classList.add('bg-rose-500', 'text-white', 'border-rose-600');
+                buttons[q.a].classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+                stats.wrong++;
+                showIraqiToast(false);
+            }
+
+            updateScoreboard();
+        }
+
+        function updateScoreboard() {
+            const grade = (stats.correct * weight).toFixed(1);
+            document.getElementById('grade').innerText = grade;
+            document.getElementById('correct').innerText = stats.correct;
+            document.getElementById('wrong').innerText = stats.wrong;
+        }
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            QUESTIONS.forEach((q, i) => {
+                const div = document.createElement('div');
+                div.id = `card-${i}`;
+                div.className = "pb-12 border-b border-slate-50 space-y-6";
+
+                let optionsHtml = '';
+                q.options.forEach((opt, oi) => {
+                    optionsHtml += `
+                        <button onclick="checkAnswer(${i}, ${oi}, this)" 
+                                class="opt-btn w-full p-4 rounded-xl border border-slate-200 text-right flex items-center gap-4 hover:border-indigo-400 hover:bg-indigo-50/30 transition-all group">
+                            <span class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center font-bold text-slate-300 group-hover:bg-indigo-600 group-hover:text-white transition-all shrink-0">
+                                ${String.fromCharCode(65 + oi)}
+                            </span>
+                            <span class="font-medium text-slate-700" dir="ltr">${opt}</span>
+                        </button>
+                    `;
+                });
+
+                div.innerHTML = `
+                    <div class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Question ${i + 1}</div>
+                    <h2 class="text-xl font-bold leading-relaxed text-slate-800" dir="ltr">${q.q}</h2>
+                    <div class="grid gap-3">${optionsHtml}</div>
+                `;
+                container.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>
+
